@@ -52,8 +52,8 @@ package com.company;
                if (name.equals(digit.name())) {
                    fFinded = true;
                    this.number = digit.getDigit();
-                   System.out.print(digit.name());
-                   System.out.println(" - " + this.number);
+//                   System.out.print(digit.name());
+//                   System.out.println(" - " + this.number);
                    break;
                }
            }

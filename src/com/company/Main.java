@@ -1,10 +1,17 @@
 package com.company;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        System.out.print("Введите строку:");
+        String inputExpr = reader.readLine();
         try {
-            System.out.println(calc(" 9 / 2 "));
+            System.out.println(calc(inputExpr));
         }
         catch (Exception e) {
             System.out.println("Без паники! Все под контролем!");
@@ -18,7 +25,7 @@ public class Main {
         Operate[] opers = new Operate[maxNumberOperands];
         Operate inputOper = Operate.ADD;
         Operand [] operands = new Operand[maxNumberOperands];
-        int i = 0, j = -1, indexFind = 0, minIndexFind = 0;
+        int i = 0, j = -1, findedIndex = 0, minIndex = 0, startIndex = 0;
         boolean fFinded = true;
         int result = 0;
         String sResult = "", sRresult= "";
@@ -26,17 +33,18 @@ public class Main {
 
         System.out.println("Строка на входе: " + inputExpr);
         // пройдемся по строке inputOrder найдем все операнды и запишем их в массив operands
-        while (fFinded && i <= inputExpr.length()) {
+        //&& startIndex < inputExpr.length()
+        while (fFinded && j < maxNumberOperands - 1) {
             fFinded = false;
-            minIndexFind = inputExpr.length() + 1;
+            minIndex = inputExpr.length();
             // пробежимся по списку валидных операций и найдем первую операцию во входной строке
-            for (Operate mOper : listOperate) {
-                indexFind = inputExpr.indexOf(mOper.getSig(), i);
-                if (indexFind > -1) {
-                    if (indexFind < minIndexFind) {
+            for (Operate mO : listOperate) {
+                findedIndex = inputExpr.indexOf(mO.getSig(), startIndex);
+                if (findedIndex > -1) {
+                    if (findedIndex < minIndex) {
                         fFinded = true;
-                        minIndexFind = indexFind;
-                        inputOper = mOper;
+                        minIndex = findedIndex;
+                        inputOper = mO;
                     }
                 }
  //               System.out.print(mOper.getSig());
@@ -49,23 +57,23 @@ public class Main {
   //          }
             if (fFinded) {
                 j++;
-                operands[j] = new Operand(inputExpr.substring(i, minIndexFind));
+                operands[j] = new Operand(inputExpr.substring(startIndex, minIndex));
+//                System.out.println(j +" операнд: " + operands[j].name);
                 opers[j] = inputOper;
-//                System.out.println(j+1 +" операнд: " + operands[j].name);
                 operands[j].setTypeOperand();
 //                System.out.println("Тип : " + operands[j].type);
-                i = minIndexFind + 1;
+                startIndex = minIndex + 1;
             }
             else {
-                if (j > -1) { //операнды были, но все вышли, остался последний в конце строки
+                if (j > -1) { //значит операнды есть в начале строки и они уже занесены в массив, остался последний в конце строки
                     j++;
-                    operands[j] = new Operand(inputExpr.substring(i));
-//                    System.out.println(j+1 +" операнд: " + operands[j].name);
+                    operands[j] = new Operand(inputExpr.substring(startIndex));
+//                    System.out.println(j +"Последний операнд: " + operands[j].name);
                     operands[j].setTypeOperand();
 //                    System.out.println("Тип: " + operands[j].type);
                 }
                 else { // нет операторов
-                    throw new Exception("Нет операторов!");
+                    throw new Exception("Нет оператора!");
                 }
             }
 
@@ -127,8 +135,7 @@ public class Main {
                 }
             }
         }
-
-        System.out.println("Hello World from OldSchoolMan! Calculated: " + result);
+//        System.out.println("Hello World from OldSchoolMan! Calculated: " + result);
         if (sRresult.isEmpty()) return sResult;
         else return sRresult;
     }
